@@ -52,7 +52,7 @@ To send data to a POST route via `curl`, the following command can be used:
 
 ### POST `/`
 
-This route will take a `senderID`, `recipientID` and a `message` and store them as a JSON file that
+This route will take a `sender`, `recipient` and a `message` and store them as a JSON file that
 acts as a recipients mailbox to be retrieved at another time. These three fields are required.
 
 On a successful save, will return a confirmation message. 
