@@ -11,7 +11,7 @@ Docker container orchestration to create a postgres image and store messages/use
 
 ### Dependencies
 
-Ensure that `npm` and `node are installed on the machine running the server. 
+Ensure that `npm` and `node` are installed on the machine running the server. 
 
 You can verify if `npm` and `node` are installed by running
 
