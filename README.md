@@ -5,7 +5,8 @@
 ChitChat is a simple messaging API that has two routes for posting and retrieving messages
 
 The code only handles this use-case and reads/writes from/to local disk. If I were to fully flesh this out into a microservice, I would leverage AWS S3 as a document store for storing messages, or add some
-Docker container orchestration to create a postgres image and store messages/user information there and migrate data using knex.js. This would allow me to build out other functionality like making a functioning chatroom or user authentication.
+Docker container orchestration to create a postgres image and store messages/user information there and migrate data using knex.js. This would allow me to build out other functionality like making a functioning chatroom or user authentication. I would also begin building out a frontend portion once I
+have a firmer idea on what features I would like to incorporate into the application.
 
 ## Getting Started
 
@@ -139,13 +140,13 @@ This route will return up to 100 messages or all the messages for the past 30 da
 ]
 ```
 
-### GET `/messages?userID=:id`
+### GET `/messages?recipientID=:id`
 
 This route will return up to 100 messages or all the messages for the past 30 days for *ONE* recipient user of the provided ID
 
 **Request**
 
-`curl "http://localhost:8080/messages?userID=7"`
+`curl "http://localhost:8080/messages?recipientID=7"`
 
 **Response**
 ```json
@@ -180,6 +181,28 @@ This route will return up to 100 messages or all the messages for the past 30 da
             "recipient": 7,
             "message": "answer plz",
             "sent": "2021-03-28T15:58:55.762-04:00"
+        }
+    ]
+]
+```
+
+### GET `/messages?recipientID=:id&senderID=:id`
+
+This route will return up to 100 messages or all the messages for the past 30 days for *ONE* recipient user of the provided ID sent by the user of the provided senderID
+
+**Request**
+
+`curl "http://localhost:8080/messages?recipientID=7&senderID=1"`
+
+**Response**
+```json
+[
+    [
+        {
+            "sender": 1,
+            "recipient": 7,
+            "message": "help plz",
+            "sent": "2021-03-28T14:51:20.442-04:00"
         }
     ]
 ]

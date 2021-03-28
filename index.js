@@ -11,19 +11,33 @@ const MAX_DAYS = process.env.MAX_DAYS || 30;
 const BUCKET = process.env.BUCKET || "./messages/";
 const MESSAGE_FILE_EXTENSION = ".json"
 const PORT = process.env.PORT || 8080;
+const MAX_MESSAGE_LENGTH = process.env.MAX_MESSAGE_LENGTH || 150;
 
 app.get('/messages', async function(req, res) {
-    let userID = req.query.userID;
+    let recipientID = req.query.recipientID;
+    let senderID = req.query.senderID;
     fs.readdir(BUCKET, (err, files) => {
         if (err)
             console.log(err);
         else {
             let output = [];
-            if (userID !== undefined) {
-                if (doesFileExist(getFilename(userID))) {
-                    output.push(processFile(userID + MESSAGE_FILE_EXTENSION))
+            if (recipientID !== undefined) {
+                if (doesFileExist(getFilename(recipientID))) {
+                    messages = processFile(recipientID + MESSAGE_FILE_EXTENSION)
+                    if (senderID !== undefined) {
+                        senderIDInt = parseInt(senderID)
+                        // if we want to see messages from a specific sender, filter out the results
+                        // there's probably a better javascript way to do this
+                        for (var i = 0; i < messages.length; i++) {
+                            if (messages[i].sender !== senderIDInt) {
+                                messages.splice(i, 1)
+                                i--
+                            }
+                        }
+                    }
+                    output.push(messages)
                 } else {
-                    res.send("No messages exist for userID: " + userID)
+                    res.send("No messages exist for recipientID: " + recipientID)
                     return
                 }
             }
@@ -51,7 +65,7 @@ app.post('/', async function(req, res) {
     }
     
     if (!validateMessage(message)) {
-        res.send('Invalid message: Message field cannot be empty or missing')
+        res.send('Invalid message: Message field cannot be empty or missing or greater than ' + MAX_MESSAGE_LENGTH + ' chars in length')
         return
     }
 
@@ -127,7 +141,7 @@ function checkAndCreateDirectory(directory) {
  * @returns a boolean if the message is valid of not
  */
 function validateMessage(message) {
-    return !(message === undefined || message === "");
+    return !(message === undefined || message === "" || message.length > MAX_MESSAGE_LENGTH);
 }
 
 /**
