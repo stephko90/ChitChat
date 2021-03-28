@@ -20,7 +20,12 @@ app.get('/messages', async function(req, res) {
         else {
             let output = [];
             if (userID !== undefined) {
-                output.push(processFile(userID + MESSAGE_FILE_EXTENSION))
+                if (doesFileExist(getFilename(userID))) {
+                    output.push(processFile(userID + MESSAGE_FILE_EXTENSION))
+                } else {
+                    res.send("No messages exist for userID: " + userID)
+                    return
+                }
             }
             else {
                 // read through each file in the bucket
@@ -74,6 +79,7 @@ app.post('/', async function(req, res) {
 
 app.listen(PORT, () => {
     console.log(`Server listening at http://localhost:${PORT}`)
+    checkAndCreateDirectory(BUCKET)
 });
 
 /**
@@ -85,6 +91,34 @@ app.listen(PORT, () => {
  */
 function getFilename(recipientID) {
     return BUCKET + recipientID + MESSAGE_FILE_EXTENSION;
+}
+
+/**
+ * Helper function to determine if a file exists or not
+ * @param {the full relative path of the file to check if it exists} file 
+ * @returns a boolean of a files existence
+ */
+function doesFileExist(file) {
+    try {
+        return fs.existsSync(file);
+      } catch(err) {
+        console.error(err)
+        return false
+      }
+}
+
+/**
+ * Checks if a provided directory exists, and if not, creates it.
+ * @param {the name of the directory to check/create} directory 
+ */
+function checkAndCreateDirectory(directory) {
+    try {
+        if (!fs.existsSync(directory)) {
+            fs.mkdirSync(directory);
+        }
+      } catch(e) {
+        console.log("An error occurred creatign directory: " + directory)
+      }
 }
 
 /**
@@ -103,7 +137,7 @@ function validateMessage(message) {
  * @returns an array of message objects
  */
 function processFile(file) {
-    let mailboxJSON = fs.readFileSync(BUCKET+file,"utf-8");
+    let mailboxJSON = fs.readFileSync(BUCKET+file,{flag: 'a+'});
     let messages = JSON.parse(mailboxJSON);
     let parsedMessage = parseMessages(messages);
     return parsedMessage;
