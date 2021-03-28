@@ -63,7 +63,8 @@ On a successful save, will return a confirmation message.
 
 `curl -d "sender=5&recipient=7&message=test" -X POST "localhost:8080/"`
 
-```curl --header "Content-Type: application/json" \
+```
+    curl --header "Content-Type: application/json" \
   --request POST \
   --data '{"sender":5,"recipient":7,"message": "hello"}' \
   http://localhost:8080/
