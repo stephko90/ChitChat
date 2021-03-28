@@ -55,11 +55,19 @@ To send data to a POST route via `curl`, the following command can be used:
 This route will take a `sender`, `recipient` and a `message` and store them as a JSON file that
 acts as a recipients mailbox to be retrieved at another time. These three fields are required.
 
+The POST route will also accept a message in JSON format.
+
 On a successful save, will return a confirmation message. 
 
 **Request**
 
 `curl -d "sender=5&recipient=7&message=test" -X POST "localhost:8080/"`
+
+```curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"sender":5,"recipient":7,"message": "hello"}' \
+  http://localhost:8080/
+```
 
 **Response**
 ```
