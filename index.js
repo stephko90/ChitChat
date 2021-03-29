@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const fns = require('date-fns');
 app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -91,7 +93,17 @@ app.post('/', async function(req, res) {
     res.send("Message successfully sent!")
 })
 
-app.listen(PORT, () => {
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
+
+io.on('connection', (socket) => {
+    socket.on('chat message', (msg) => {
+        io.emit('chat message', msg);
+    });
+});
+
+http.listen(PORT, () => {
     console.log(`Server listening at http://localhost:${PORT}`)
     checkAndCreateDirectory(BUCKET)
 });
