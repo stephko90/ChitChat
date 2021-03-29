@@ -38,6 +38,8 @@ To start the server in `dev` mode, you can run the following command:
 
 This will start the server which listens on port :8080 for requests
 
+You can visit the landing page when the server starts up at `http://localhost:8080/"
+
 # API Documentation
 
 ## Basics
